@@ -37,6 +37,7 @@ const QueueForm = (props) => {
       name: enteredName,
       estTime: enteredEstTime,
       tokenNo: "",
+      estTimeTotal: 0,
     };
 
     console.log(formItem);

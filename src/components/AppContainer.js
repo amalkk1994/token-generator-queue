@@ -3,7 +3,6 @@ import styled from "styled-components";
 import Clock from "./Clock";
 import QueueForm from "./QueueForm";
 import QueueItemsContainer from "./QueueItemsContainer";
-import Timer from "./Timer";
 
 const Container = styled.div`
   background-color: #d3d3d3;
@@ -27,9 +26,16 @@ const AppContainer = () => {
     console.log("item", items);
     const itemListArray = items;
     //item.tokenNo = itemListArray.length + 1;
-    itemListArray.length >= 1
-      ? (item.tokenNo = itemListArray[itemListArray.length - 1].tokenNo * 1 + 1)
-      : (item.tokenNo = 1);
+    if (itemListArray.length >= 1) {
+      item.tokenNo = itemListArray[itemListArray.length - 1].tokenNo * 1 + 1;
+      // the time shown here will be the sum of the time of items waiting in the queue
+      item.estTimeTotal =
+        item.estTime * 1 +
+        itemListArray[itemListArray.length - 1].estTimeTotal * 1;
+    } else {
+      item.tokenNo = 1;
+      item.estTimeTotal = item.estTime;
+    }
     itemListArray.push(item);
     setItems(itemListArray);
     setReload(item);
@@ -41,7 +47,6 @@ const AppContainer = () => {
       <Clock />
       <QueueForm onAddToQueue={addToQueue} />
       <QueueItemsContainer items={items} reload={reload} />
-      <Timer time="1" />
     </Container>
   );
 };
