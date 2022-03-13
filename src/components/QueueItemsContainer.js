@@ -6,7 +6,7 @@ const QueueItemsContainer = (props) => {
   return (
     <div>
       {items.map((item) => {
-        return <QueueItem item={item} />;
+        return <QueueItem item={item} key={item.tokenNo} />;
       })}
     </div>
   );
