@@ -23,6 +23,7 @@ const AppContainer = () => {
 
   const [items, setItems] = useState([]);
   const [cancelledItems, setCancelledItems] = useState([]);
+  const [completedItems, setCompletedItems] = useState([]);
   const [reload, setReload] = useState();
   let [timerAction, setTimerAction] = useState("stop");
 
@@ -64,6 +65,19 @@ const AppContainer = () => {
     setReload(cancelledItem);
   }
 
+  function completeFromQueue(itemId) {
+    let completedItemsArray = completedItems;
+    let newItemsArray = [];
+    let completedItem = items.filter((item) => item.id === itemId)[0];
+    console.log("completed item", completedItem, "id:", itemId);
+    newItemsArray = items.filter((item) => item.id !== itemId);
+
+    completedItemsArray.push(completedItem);
+    setItems(newItemsArray);
+    setCompletedItems(completedItemsArray);
+    setReload(completedItem);
+  }
+
   useEffect(() => {
     console.log("timer action passed", timerAction);
   }, [timerAction]);
@@ -78,12 +92,17 @@ const AppContainer = () => {
         reload={reload}
         queueName="Main Queue"
         onCancel={cancelFromQueue}
+        onComplete={completeFromQueue}
       />
       <QueueItemsContainer
         items={cancelledItems}
         reload={reload}
         queueName="Cancel Queue"
-        onCancel={cancelFromQueue}
+      />
+      <QueueItemsContainer
+        items={completedItems}
+        reload={reload}
+        queueName="Completed Queue"
       />
     </Container>
   );

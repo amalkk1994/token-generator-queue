@@ -12,6 +12,7 @@ const QueueItemsContainer = (props) => {
             item={item}
             key={item.tokenNo}
             onCancel={props.onCancel}
+            onComplete={props.onComplete}
             queueName={props.queueName}
           />
         );
