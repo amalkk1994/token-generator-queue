@@ -33,6 +33,7 @@ const QueueItem = (props) => {
         display={displayBtn}
         backgroundColor="green"
         itemId={props.item.id}
+        onClick={props.onSkip}
       />
       <Button
         btnName="Complete"
