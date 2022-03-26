@@ -4,6 +4,12 @@ import Clock from "./Clock";
 import QueueForm from "./QueueForm";
 import QueueItemsContainer from "./QueueItemsContainer";
 import Button from "./Button";
+import {
+  addToQueue,
+  cancelFromQueue,
+  completeFromQueue,
+  skipItem,
+} from "../utils/queueOperations";
 //import Timer from "./Timer";
 
 const Container = styled.div`
@@ -13,14 +19,6 @@ const Container = styled.div`
 `;
 
 const AppContainer = () => {
-  /*
-  const items = [
-    { id: "1101", name: "Naveen", tokenNo: "1" },
-    { id: "1102", name: "Tharun", tokenNo: "2" },
-    { id: "1103", name: "Theera", tokenNo: "3" },
-  ];
-*/
-
   const [items, setItems] = useState([]);
   const [cancelledItems, setCancelledItems] = useState([]);
   const [completedItems, setCompletedItems] = useState([]);
@@ -33,23 +31,10 @@ const AppContainer = () => {
     return newTokenRef.current;
   }
 
-  function addToQueue(item) {
-    // token generation logic should be fixed
-    console.log("item", items);
-    const itemListArray = items;
-    //item.tokenNo = itemListArray.length + 1;
+  function addToQueueHandler(item) {
     item.tokenNo = generateToken();
-    if (itemListArray.length >= 1) {
-      // item.tokenNo = itemListArray[itemListArray.length - 1].tokenNo * 1 + 1;
-      // the time shown here will be the sum of the time of items waiting in the queue
-      item.estTimeTotal =
-        item.estTime * 1 +
-        itemListArray[itemListArray.length - 1].estTimeTotal * 1;
-    } else {
-      //item.tokenNo = 1;
-      item.estTimeTotal = item.estTime;
-    }
-    itemListArray.push(item);
+    console.log(addToQueue);
+    const itemListArray = addToQueue(item, items);
     setItems(itemListArray);
     setReload(!reload);
     console.log("items array", items);
@@ -60,46 +45,25 @@ const AppContainer = () => {
     setTimerAction("start");
   }
 
-  function cancelFromQueue(itemId) {
+  function cancelFromQueueHandler(itemId) {
     // removes item from main queue and places inside cancelled queue
-    let cancelledItemsArray = cancelledItems;
-    let newItemsArray = [];
-    let cancelledItem = items.filter((item) => item.id === itemId)[0];
-    console.log("cancelled item", cancelledItem, "id:", itemId);
-    newItemsArray = items.filter((item) => item.id !== itemId);
-
-    cancelledItemsArray.push(cancelledItem);
-    setItems(newItemsArray);
-    setCancelledItems(cancelledItemsArray);
+    const queues = cancelFromQueue(itemId, items, cancelledItems);
+    setItems(queues.mainQueue);
+    setCancelledItems(queues.cancelQueue);
     setReload(!reload);
   }
 
-  function completeFromQueue(itemId) {
+  function completeFromQueueHandler(itemId) {
     // removes item from main queue and places inside completed queue
-    let completedItemsArray = completedItems;
-    let newItemsArray = [];
-    let completedItem = items.filter((item) => item.id === itemId)[0];
-    console.log("completed item", completedItem, "id:", itemId);
-    newItemsArray = items.filter((item) => item.id !== itemId);
-
-    completedItemsArray.push(completedItem);
-    setItems(newItemsArray);
-    setCompletedItems(completedItemsArray);
+    const queues = completeFromQueue(itemId, items, completedItems);
+    setItems(queues.mainQueue);
+    setCompletedItems(queues.completeQueue);
     setReload(!reload);
   }
 
-  function skipItem(itemId) {
+  function skipItemHandler(itemId) {
     // skip function will rearrage position of the item in queue with one below it
-    const itemIndex = items.findIndex((item) => item.id === itemId);
-    console.log("item index", itemIndex);
-    const newItemsArray = items;
-    if (newItemsArray[itemIndex + 1].id) {
-      [newItemsArray[itemIndex], newItemsArray[itemIndex + 1]] = [
-        newItemsArray[itemIndex + 1],
-        newItemsArray[itemIndex],
-      ];
-    }
-    setItems(newItemsArray);
+    setItems(skipItem(itemId, items));
     setReload(!reload);
   }
 
@@ -111,14 +75,14 @@ const AppContainer = () => {
     <Container>
       <Clock />
       <Button btnName="START" onClick={startTimer} />
-      <QueueForm onAddToQueue={addToQueue} />
+      <QueueForm onAddToQueue={addToQueueHandler} />
       <QueueItemsContainer
         items={items}
         reload={reload}
         queueName="Main Queue"
-        onCancel={cancelFromQueue}
-        onComplete={completeFromQueue}
-        onSkip={skipItem}
+        onCancel={cancelFromQueueHandler}
+        onComplete={completeFromQueueHandler}
+        onSkip={skipItemHandler}
       />
       <QueueItemsContainer
         items={cancelledItems}
