@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Clock from "./Clock";
 import QueueForm from "./QueueForm";
@@ -26,20 +26,27 @@ const AppContainer = () => {
   const [completedItems, setCompletedItems] = useState([]);
   const [reload, setReload] = useState(0);
   let [timerAction, setTimerAction] = useState("stop");
+  let newTokenRef = useRef(0);
+
+  function generateToken() {
+    newTokenRef.current = newTokenRef.current * 1 + 1;
+    return newTokenRef.current;
+  }
 
   function addToQueue(item) {
     // token generation logic should be fixed
     console.log("item", items);
     const itemListArray = items;
     //item.tokenNo = itemListArray.length + 1;
+    item.tokenNo = generateToken();
     if (itemListArray.length >= 1) {
-      item.tokenNo = itemListArray[itemListArray.length - 1].tokenNo * 1 + 1;
+      // item.tokenNo = itemListArray[itemListArray.length - 1].tokenNo * 1 + 1;
       // the time shown here will be the sum of the time of items waiting in the queue
       item.estTimeTotal =
         item.estTime * 1 +
         itemListArray[itemListArray.length - 1].estTimeTotal * 1;
     } else {
-      item.tokenNo = 1;
+      //item.tokenNo = 1;
       item.estTimeTotal = item.estTime;
     }
     itemListArray.push(item);
