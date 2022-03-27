@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, createContext } from "react";
 import styled from "styled-components";
 import Clock from "./Clock";
 import QueueForm from "./QueueForm";
@@ -17,6 +17,13 @@ const Container = styled.div`
   margin: 5% 10%;
   padding: 5%;
 `;
+
+export const QueueOperationsContext = createContext({
+  addToQueueHandler: (item) => {},
+  cancelFromQueueHandler: (itemId) => {},
+  completeFromQueueHandler: (itemId) => {},
+  skipItemHandler: (itemId) => {},
+});
 
 const AppContainer = () => {
   const [items, setItems] = useState([]);
@@ -67,36 +74,50 @@ const AppContainer = () => {
     setReload(!reload);
   }
 
+  const context = {
+    addToQueueHandler: addToQueueHandler,
+    cancelFromQueueHandler: cancelFromQueueHandler,
+    completeFromQueueHandler: completeFromQueueHandler,
+    skipItemHandler: skipItemHandler,
+  };
+
   useEffect(() => {
     console.log("timer action passed", timerAction);
   }, [timerAction]);
 
   return (
     <Container>
-      <Clock />
-      <Button btnName="START" onClick={startTimer} />
-      <QueueForm onAddToQueue={addToQueueHandler} />
-      <QueueItemsContainer
-        items={items}
-        reload={reload}
-        queueName="Main Queue"
-        onCancel={cancelFromQueueHandler}
-        onComplete={completeFromQueueHandler}
-        onSkip={skipItemHandler}
-      />
-      <QueueItemsContainer
-        items={cancelledItems}
-        reload={reload}
-        queueName="Cancel Queue"
-      />
-      <QueueItemsContainer
-        items={completedItems}
-        reload={reload}
-        queueName="Completed Queue"
-      />
+      <QueueOperationsContext.Provider value={context}>
+        <Clock />
+        <Button btnName="START" onClick={startTimer} />
+        <QueueForm onAddToQueue={addToQueueHandler} />
+        <QueueItemsContainer
+          items={items}
+          reload={reload}
+          queueName="Main Queue"
+        />
+        <QueueItemsContainer
+          items={cancelledItems}
+          reload={reload}
+          queueName="Cancel Queue"
+        />
+        <QueueItemsContainer
+          items={completedItems}
+          reload={reload}
+          queueName="Completed Queue"
+        />
+      </QueueOperationsContext.Provider>
     </Container>
   );
 };
+
+/*
+
+          onCancel={cancelFromQueueHandler}
+          onComplete={completeFromQueueHandler}
+          onSkip={skipItemHandler}
+
+*/
 
 export default AppContainer;
 

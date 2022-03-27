@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import Button from "./Button";
+import { QueueOperationsContext } from "./AppContainer";
+import { useContext } from "react";
 //import Timer from "./Timer";
 
 const StyledField = styled.h4`
@@ -16,6 +18,7 @@ const Item = styled.div`
 
 const QueueItem = (props) => {
   const displayBtn = props.queueName === "Main Queue" ? "inline-block" : "none";
+  const queueOperationsCtx = useContext(QueueOperationsContext);
   return (
     <Item>
       <StyledField>ID: {props.item.id}</StyledField>
@@ -26,21 +29,21 @@ const QueueItem = (props) => {
         display={displayBtn}
         backgroundColor="green"
         itemId={props.item.id}
-        onClick={props.onCancel}
+        onClick={queueOperationsCtx.cancelFromQueueHandler}
       />
       <Button
         btnName="Skip"
         display={displayBtn}
         backgroundColor="green"
         itemId={props.item.id}
-        onClick={props.onSkip}
+        onClick={queueOperationsCtx.skipItemHandler}
       />
       <Button
         btnName="Complete"
         display={displayBtn}
         backgroundColor="green"
         itemId={props.item.id}
-        onClick={props.onComplete}
+        onClick={queueOperationsCtx.completeFromQueueHandler}
       />
     </Item>
   );

@@ -11,9 +11,6 @@ const QueueItemsContainer = (props) => {
           <QueueItem
             item={item}
             key={item.tokenNo}
-            onCancel={props.onCancel}
-            onComplete={props.onComplete}
-            onSkip={props.onSkip}
             queueName={props.queueName}
           />
         );
@@ -21,5 +18,11 @@ const QueueItemsContainer = (props) => {
     </div>
   );
 };
+
+/*
+            onCancel={props.onCancel}
+            onComplete={props.onComplete}
+            onSkip={props.onSkip}
+*/
 
 export default QueueItemsContainer;
